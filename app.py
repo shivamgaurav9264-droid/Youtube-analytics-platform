@@ -3,10 +3,10 @@ import pandas as pd
 import plotly.express as px
 import joblib
 
-# ----------------- Page Config -----------------
+# Page Config 
 st.set_page_config(page_title="YouTube Analytics Platform", layout="wide")
 
-# ----------------- Load Data -----------------
+#  Load Data 
 df = pd.read_csv("youtube.csv")
 model = joblib.load("youtube_views_model.pkl")
 
@@ -14,7 +14,7 @@ model = joblib.load("youtube_views_model.pkl")
 df['publish_date'] = pd.to_datetime(df['publish_date'], errors='coerce')
 df['month'] = df['publish_date'].dt.month
 
-# ---------------- Sidebar ----------------
+#  Sidebar 
 st.sidebar.title("Navigation")
 
 page = st.sidebar.selectbox(
@@ -22,7 +22,7 @@ page = st.sidebar.selectbox(
     ["Dashboard", "Prediction", "Insights"]
 )
 
-# ================= Dashboard =================
+# Dashboard 
 if page == "Dashboard":
 
     st.title("📊 YouTube Analytics Platform")
@@ -65,10 +65,10 @@ if page == "Dashboard":
 
     st.plotly_chart(fig1, use_container_width=True)
 
-    # ⬇️ SEARCH VIDEO SECTION
+    # SEARCH VIDEO SECTION
     st.divider()
 
-    st.subheader("🔍 Search Video")
+    st.subheader(" Search Video")
 
     video_name = st.text_input("Enter Video Title")
 
@@ -81,10 +81,10 @@ if page == "Dashboard":
             result[['title', 'channel_title', 'views', 'likes', 'comment_count']]
         )
 
-    # ⬇️ ADD CATEGORY FILTER HERE
+    #  ADD CATEGORY FILTER HERE
     st.divider()
 
-    st.subheader("📂 Category Filter")
+    st.subheader(" Category Filter")
 
     category = st.selectbox(
         "Select Category",
@@ -103,7 +103,7 @@ if page == "Dashboard":
     st.divider()
 
     # Download Dataset
-    st.subheader("📥 Download Dataset")
+    st.subheader(" Download Dataset")
 
     csv = df.to_csv(index=False)
 
@@ -115,7 +115,7 @@ if page == "Dashboard":
     )
     st.divider()
 
-    st.subheader("📊 Views vs Likes")
+    st.subheader(" Views vs Likes")
 
     fig2 = px.scatter(
         df.sample(1000),
@@ -128,7 +128,7 @@ if page == "Dashboard":
     st.plotly_chart(fig2, use_container_width=True)
     st.divider()
 
-    st.subheader("🔥 Top 10 Engaging Videos")
+    st.subheader(" Top 10 Engaging Videos")
 
     df['engagement_rate'] = (
         df['likes'] + df['comment_count']
@@ -156,7 +156,7 @@ if page == "Dashboard":
     )
     st.divider()
 
-    st.subheader("📈 Distribution of Video Views")
+    st.subheader(" Distribution of Video Views")
 
     fig3 = px.histogram(
         df,
@@ -169,7 +169,7 @@ if page == "Dashboard":
     
     st.divider()
 
-    st.subheader("🥧 Category Distribution")
+    st.subheader(" Category Distribution")
 
     category_counts = (
         df['category_id']
@@ -191,7 +191,7 @@ if page == "Dashboard":
     
     st.divider()
 
-    st.subheader("📅 Upload Day Analysis")
+    st.subheader(" Upload Day Analysis")
 
     day_counts = (
         df['published_day_of_week']
@@ -212,7 +212,7 @@ if page == "Dashboard":
     
     st.divider()
 
-    st.subheader("⏰ Best Upload Time Analysis")
+    st.subheader(" Best Upload Time Analysis")
 
     # Extract hour if not already present
     df['hour'] = pd.to_datetime(df['publish_date']).dt.hour
@@ -238,7 +238,7 @@ if page == "Dashboard":
     
     st.divider()
 
-    st.subheader("🌎 Top Countries")
+    st.subheader("Top Countries")
 
     country_counts = (
         df['publish_country']
@@ -261,7 +261,7 @@ if page == "Dashboard":
     
     st.divider()
 
-    st.subheader("📈 Correlation Heatmap")
+    st.subheader(" Correlation Heatmap")
 
     corr = df[['views', 'likes', 'comment_count']].corr()
 
@@ -276,7 +276,7 @@ if page == "Dashboard":
     
     st.divider()
 
-    st.subheader("🎥 Channel Analysis")
+    st.subheader(" Channel Analysis")
 
     selected_channel = st.selectbox(
         "Select a Channel",
@@ -306,7 +306,7 @@ if page == "Dashboard":
     
     st.divider()
 
-    st.subheader("🏆 Top 10 Videos by Views")
+    st.subheader(" Top 10 Videos by Views")
 
     top_videos = (
         df.sort_values(by='views', ascending=False)
@@ -322,12 +322,12 @@ if page == "Dashboard":
     )
 
     st.plotly_chart(fig10, use_container_width=True)
-# ================= Prediction =================
+#  Prediction 
 
 
 elif page == "Prediction":
 
-    st.title("🔮 YouTube Views Prediction")
+    st.title(" YouTube Views Prediction")
 
     likes = st.number_input("Likes", min_value=0)
     comments = st.number_input("Comments", min_value=0)
@@ -341,12 +341,12 @@ elif page == "Prediction":
 
         prediction = model.predict(input_data)
 
-        st.success(f"🎯 Estimated Views: {int(prediction[0]):,}")
+        st.success(f" Estimated Views: {int(prediction[0]):,}")
 
     st.divider()
 
-    # ---------- Channel Search ----------
-    st.subheader("🔍 Search Channel")
+    # Channel Search 
+    st.subheader(" Search Channel")
 
     channel = st.selectbox(
         "Select Channel",
@@ -359,7 +359,7 @@ elif page == "Prediction":
 
     st.divider()
 
-    # ---------- Download ----------
+    # Download 
     csv = df.to_csv(index=False)
 
     st.download_button(
@@ -369,10 +369,10 @@ elif page == "Prediction":
         mime="text/csv"
     )
 
-# ================= Insights =================
+#  Insights 
 elif page == "Insights":
 
-    st.title("📈 Insights")
+    st.title(" Insights")
 
     st.subheader("Correlation between Views, Likes and Comments")
 
