@@ -25,7 +25,7 @@ page = st.sidebar.selectbox(
 # Dashboard 
 if page == "Dashboard":
 
-    st.title("📊 YouTube Analytics Platform")
+    st.title(" YouTube Analytics Platform")
 
     # KPI Cards
     col1, col2, col3, col4 = st.columns(4)
@@ -38,7 +38,7 @@ if page == "Dashboard":
     st.divider()
 
     # Monthly Trend
-    st.subheader("📈 Monthly Views Trend")
+    st.subheader(" Monthly Views Trend")
 
     monthly_views = df.groupby('month')['views'].sum()
 
@@ -47,7 +47,7 @@ if page == "Dashboard":
     st.divider()
 
     # Top Channels
-    st.subheader("🔥 Top 10 Channels")
+    st.subheader(" Top 10 Channels")
 
     top_channels = (
         df.groupby('channel_title')['views']
