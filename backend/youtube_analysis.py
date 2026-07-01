@@ -1,5 +1,4 @@
 
-from statistics import LinearRegression
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -47,7 +46,8 @@ plt.xlabel("Channel")
 plt.ylabel("Total Views")
 plt.title("Top 10 Channels by Total Views")
 plt.xticks(rotation=45)
-plt.show()
+plt.savefig("graph_name.png")
+plt.close()
 
 top_categories = df['category_id'].value_counts().head(10)
 
@@ -56,7 +56,8 @@ top_categories.plot(kind='bar')
 plt.xlabel("Category ID")
 plt.ylabel("Number of Videos")
 plt.title("Most Popular Categories")
-plt.show()
+plt.savefig("graph_name.png")
+plt.close()
 
 import seaborn as sns
 
@@ -64,7 +65,8 @@ plt.figure(figsize=(8,6))
 sns.heatmap(df[['views', 'likes', 'comment_count']].corr(),
             annot=True, cmap='coolwarm')
 plt.title("Correlation Heatmap")
-plt.show()
+plt.savefig("graph_name.png")
+plt.close()
 
 df.to_csv("cleaned_youtube.csv", index=False)
 
@@ -86,7 +88,8 @@ plt.xlabel("Month")
 plt.ylabel("Number of Videos")
 plt.title("Number of Videos Published by Month")
 plt.grid(True)
-plt.show()
+plt.savefig("graph_name.png")
+plt.close()
 
 # Engagement ratio
 df['engagement_ratio'] = (df['likes'] + df['comment_count']) / df['views']
@@ -110,41 +113,58 @@ df['hour'] = df['publish_date'].dt.hour
 # Calculate engagement rate
 df['engagement_rate'] = (
     df['likes'] + df['comment_count']
-) / df['views']
+) / (df['views'] + 1)
 
 # Display sample
 print(df[['views', 'likes', 'comment_count', 'engagement_rate']].head())
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import r2_score, mean_squared_error
 import joblib
 
-# Features and target
-X = df[['likes', 'comment_count']]
-y = df['views']
+# Features
+X = df[
+    [
+        "likes",
+        "comment_count",
+        "engagement_rate",
+        "month",
+        "day",
+        "hour"
+    ]
+]
 
-# Split data
+# Target
+y = df["views"]
+
+# Train Test Split
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
 )
 
-# Train Random Forest Model
-model = LinearRegression()
-
+# Random Forest Model
+model = RandomForestRegressor(
+    n_estimators=200,
+    random_state=42,
+    n_jobs=-1
+)
 
 model.fit(X_train, y_train)
 
-# Predictions
+# Prediction
 y_pred = model.predict(X_test)
 
-# Evaluation
 print("R² Score:", r2_score(y_test, y_pred))
-print("Mean Squared Error:", mean_squared_error(y_test, y_pred))
+print("RMSE:", mean_squared_error(y_test, y_pred) ** 0.5)
 
-# Save model
+# Save Model
 joblib.dump(model, "youtube_views_model.pkl")
-print("Model saved successfully!")
+
+print("Model Saved Successfully")
 
 # Actual vs Predicted Plot
 plt.figure(figsize=(8,6))
@@ -153,4 +173,5 @@ plt.xlabel("Actual Views")
 plt.ylabel("Predicted Views")
 plt.title("Random Forest: Actual vs Predicted Views")
 plt.grid(True)
-plt.show()
+plt.savefig("graph_name.png")
+plt.close()
